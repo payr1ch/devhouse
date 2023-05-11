@@ -12,4 +12,6 @@ public interface AnswerRepo extends JpaRepository<Answer, Long> {
     List<Answer> findByPostOrderByVotesDesc(Post post);
 
     List<Answer> findByAuthor(User user);
+
+    Answer findAnswerById(Long commentId);
 }
