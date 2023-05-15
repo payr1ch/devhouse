@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -75,5 +77,24 @@ public class PostService {
         }
 
         return postRepository.save(post);
+    }
+
+    public List<Post> getPostsByUnanswered() {
+        return postRepository.findByNumberOfAnsersEquals(0);
+    }
+
+
+    public List<Post> getRecentPosts() {
+        Calendar oneDayAgo = Calendar.getInstance();
+        oneDayAgo.add(Calendar.DAY_OF_YEAR, -1);
+        return postRepository.findByCreatedAtGreaterThanOrderByCreatedAtDesc(oneDayAgo.getTime());
+    }
+
+    public List<Post> getUnacceptedPosts() {
+        return postRepository.findByStatusNotAndNumberOfAnsersNotOrderByCreatedAtDesc("Accepted", 0);
+    }
+
+    public List<Post> getTopPosts(){
+        return postRepository.findByNumberOfAnsersGreaterThanOrStatus(5, "Accepted");
     }
 }

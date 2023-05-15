@@ -1,9 +1,11 @@
 package com.example.devhouse.answer;
 
+import com.example.devhouse.notification.NotificationService;
 import com.example.devhouse.post.Post;
 import com.example.devhouse.post.PostRepo;
 import com.example.devhouse.user_things.user.User;
 import com.example.devhouse.user_things.user.UserRepo;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,31 @@ public class AnswerService {
     @Autowired
     private PostRepo postRepo;
 
+    @Autowired
+    private NotificationService notificationService;
+
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<Answer> getAnswersForPost(Long postId) {
+
+    public List<AnswerDTO> getAnswersForPost(Long postId) {
         Post post = postRepo.findPostByPostId(postId);
-        return answerRepo.findByPostOrderByVotesDesc(post);
+        List<Answer> answers = answerRepo.findByPostOrderByVotesDesc(post);
+
+        List<AnswerDTO> answerDTOs = new ArrayList<>();
+        for (Answer answer : answers) {
+            AnswerDTO answerDTO = new AnswerDTO();
+            answerDTO.setId(answer.getId());
+            answerDTO.setTitle(answer.getTitle());
+            answerDTO.setVotes(answer.getVotes());
+            answerDTO.setContent(answer.getContent());
+            answerDTO.setStatus(answer.getStatus());
+            answerDTO.setCreatedAt(answer.getCreatedAt());
+            answerDTO.setVotedBy(answer.getVotedBy());
+            answerDTO.setAuthor(answer.getAuthor());
+            answerDTOs.add(answerDTO);
+        }
+
+        return answerDTOs;
     }
 
     public Answer createAnswer(CreateAnswerRequest answerRequest) throws IOException {
@@ -44,7 +66,7 @@ public class AnswerService {
         if (content != null && !content.isEmpty()) {
             List<Map<String, String>> newContent = new ArrayList<>();
             for (Map<String, Object> element : content) {
-                Map<String, String> newElement = new HashMap<>();
+                Map<String, String> newElement = new LinkedHashMap<>(); // Use LinkedHashMap to preserve insertion order
                 for (Map.Entry<String, Object> entry : element.entrySet()) {
                     String key = entry.getKey();
                     if (key.startsWith("image")) {
@@ -59,12 +81,21 @@ public class AnswerService {
                 }
                 newContent.add(newElement);
             }
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false);
             String jsonContent = objectMapper.writeValueAsString(newContent);
-            jsonContent = jsonContent.replaceAll("\\\\", "");
+
+            // Set the content to the answer
             answer.setContent(jsonContent);
         }
         postRepo.save(post);
-        return answerRepo.save(answer);
+        Answer savedAnswer = answerRepo.save(answer);
+
+        // Create notification for the post's author
+        String title = "New Answer";
+        String description = "A new answer has been posted on your post.";
+        notificationService.createNotification(title, description, userRepo.findUserByUserId(post.getAuthorId()));
+        return savedAnswer;
     }
 
 
@@ -76,6 +107,9 @@ public class AnswerService {
                 answer.setStatus("Helpful");
                 post.setStatus("Accepted");
                 answerRepo.save(answer);
+                String title = "Your answer was accepted";
+                String description = "Your answer was helpfull! Well Done :)";
+                notificationService.createNotification(title, description, userRepo.findUserByUserId(post.getAuthorId()));
             }
         }
     }
@@ -100,6 +134,11 @@ public class AnswerService {
             }
             updateRankForUser(user.getUserId());
             answerRepo.save(answer);
+            Post post = answer.getPost();
+            String title = "You're earning points!";
+            String description = "Your answer was upvoted. My boy ;)";
+            notificationService.createNotification(title, description, user);
+
         }
     }
 
@@ -123,6 +162,10 @@ public class AnswerService {
             }
             updateRankForUser(user.getUserId());
             answerRepo.save(answer);
+            Post post = answer.getPost();
+            String title = "You're losing points!";
+            String description = "Your answer was downvoted ((";
+            notificationService.createNotification(title, description, user);
         }
     }
 
@@ -136,5 +179,9 @@ public class AnswerService {
             user.setRank(totalVotes);
             userRepo.save(user);
         }
+    }
+
+    public Answer getAnswerById(Long id) {
+        return answerRepo.findAnswerById(id);
     }
 }

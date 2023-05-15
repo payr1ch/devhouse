@@ -27,7 +27,7 @@ public class Answer {
     private String content;
 
     @Column()
-    private String status = "NotAcceptedYet";
+    private String status = "NotAccepted";
 
     @Column()
     private Date createdAt;
@@ -38,12 +38,12 @@ public class Answer {
     @ElementCollection
     private Map<UUID, Vote> votedBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User author;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "post_id")
     private Post post;
 
 

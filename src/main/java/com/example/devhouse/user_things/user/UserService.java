@@ -26,6 +26,9 @@ public class UserService implements IUserService {
         return userRepo.findAll();
     }
 
+    public List<User> getUsersByRank() {
+        return userRepo.findAllByOrderByRankDesc();
+    }
     @Override
     public User registerUser(RegistrationRequest request) {
         Optional<User> user = this.findByEmail(request.email());

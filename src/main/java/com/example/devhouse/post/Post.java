@@ -32,7 +32,7 @@ public class Post {
     @Column(nullable = false)
     private String status = "Unanswered";
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tag_id")
     private Tag tag;
     @Column(nullable = false)

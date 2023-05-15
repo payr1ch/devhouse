@@ -27,4 +27,9 @@ public class UserController {
     public User updateUser(@PathVariable UUID id, @ModelAttribute UserUpdateRequest request) {
         return userService.updateUser(id, request);
     }
+
+    @GetMapping("/rank")
+    public List<User> getUsersByRank() {
+        return userService.getUsersByRank();
+    }
 }

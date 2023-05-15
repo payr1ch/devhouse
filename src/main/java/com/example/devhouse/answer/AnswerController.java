@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,13 +17,18 @@ public class AnswerController {
     private AnswerService answerService;
 
     @GetMapping("/{postId}")
-    public ResponseEntity<List<Answer>> getAnswersForPost(@PathVariable Long postId) {
-        List<Answer> answers = answerService.getAnswersForPost(postId);
+    public ResponseEntity<List<AnswerDTO>> getAnswersForPost(@PathVariable Long postId) {
+        List<AnswerDTO> answers = answerService.getAnswersForPost(postId);
         return ResponseEntity.ok(answers);
     }
+//
+//    @GetMapping("/answer/{id}")
+//    public Answer getAnswerById(@PathVariable("id") Long id) throws IOException {
+//        return answerService.getAnswerById(id);
+//    }
 
     @PostMapping("/createAnswer")
-    public ResponseEntity<Answer> createAnswer(@RequestBody CreateAnswerRequest answerRequest) {
+    public ResponseEntity<Answer> createAnswer(@ModelAttribute CreateAnswerRequest answerRequest) {
         try {
             Answer answer = answerService.createAnswer(answerRequest);
             return ResponseEntity.ok(answer);

@@ -81,7 +81,7 @@ public class RegistrationCompleteEventListener implements ApplicationListener<Re
                 + "</html>";
         MimeMessage message = mailSender.createMimeMessage();
         var messageHelper = new MimeMessageHelper(message);
-        messageHelper.setFrom("devhouse.noreply@gmail.com", senderName);
+        messageHelper.setFrom("devhousenreply@outlook.com", senderName);
         messageHelper.setTo(theUser.getEmail());
         messageHelper.setSubject(subject);
         messageHelper.setText(mailContent, true);

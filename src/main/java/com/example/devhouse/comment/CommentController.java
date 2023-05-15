@@ -20,8 +20,8 @@ public class CommentController {
     }
 
     @GetMapping("/comment/{answerId}")
-    public ResponseEntity<List<Comment>> getCommentsByAnswerId(@PathVariable Long answerId) {
-        List<Comment> comments = commentService.getCommentsByAnswerId(answerId);
+    public ResponseEntity<List<CommentDTO>> getCommentsByAnswerId(@PathVariable Long answerId) {
+        List<CommentDTO> comments = commentService.getCommentsByAnswerId(answerId);
         return ResponseEntity.ok(comments);
     }
 }
