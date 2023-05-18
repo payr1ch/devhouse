@@ -33,4 +33,14 @@ public class TagController {
     public Tag getTagByName(@PathVariable String name) {
         return tagService.getTagByName(name);
     }
+
+    @GetMapping("/popular")
+    public List<Tag> getPopularTags(){
+        return tagService.getPopularTags();
+    }
+
+    @GetMapping("/alphabetical")
+    public List<Tag> getTagsByAlphabet(){
+        return tagService.getAllTagsByAlphabeticalOrder();
+    }
 }

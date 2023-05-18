@@ -18,10 +18,10 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
-    @GetMapping("/allNotification/{userId}")
-    public List<Notification> getNotificationsByUser(@PathVariable UUID userId) {
-        return notificationService.getNotificationsByUserId(userId);
-    }
+//    @GetMapping("/allNotification/{userId}")
+//    public List<Notification> getNotificationsByUser(@PathVariable UUID userId) {
+//        return notificationService.getNotificationsByUserId(userId);
+//    }
 
     @PutMapping("/update/{notificationId}")
     public void updateNotificationStatus(@PathVariable Long notificationId) {
@@ -33,10 +33,10 @@ public class NotificationController {
         notificationService.clearAllMyNotifications(userId);
     }
 
-    @GetMapping("/poll")
-    public List<Notification> pollNotifications(@RequestParam("lastChecked") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastChecked) {
-        return notificationService.getNewNotifications(lastChecked);
-    }
+//    @GetMapping("/poll")
+//    public List<Notification> pollNotifications(@RequestParam("lastChecked") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastChecked) {
+//        return notificationService.getNewNotifications(lastChecked);
+//    }
     @GetMapping(value = "/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<Notification>> streamNotifications(@RequestParam("userId") UUID userId) {
         return notificationService.streamAllNotifications(userId);

@@ -5,9 +5,7 @@ import jakarta.persistence.Column;
 public record RegistrationRequest(
         String email,
         String password,
-        String username,
-        String groups,
-        int rank,
-        String role) {
+        String username
+        ) {
 
 }

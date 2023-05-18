@@ -23,4 +23,13 @@ public class TagService {
     public Tag getTagByName(String name) {
         return tagRepository.findByNameIgnoreCase(name);
     }
+
+    public List<Tag> getPopularTags() {
+        return tagRepository.findAllByOrderByNumberOfPostsDesc();
+    }
+
+    public List<Tag> getAllTagsByAlphabeticalOrder() {
+        return tagRepository.findAllByOrderByNameAsc();
+    }
+
 }

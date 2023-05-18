@@ -42,7 +42,7 @@ public class User{
     private int rank;
 
     @Column(nullable = false)
-    private String role;
+    private String role = "USER";
 
     @Column(nullable = true)
     private Boolean isEnabled = false;

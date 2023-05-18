@@ -8,4 +8,8 @@ public interface TagRepo extends JpaRepository<Tag, Long> {
         Tag findByNameIgnoreCase(String name);
 
     List<Tag> findByNameContainingIgnoreCase(String tag);
+
+    List<Tag> findAllByOrderByNumberOfPostsDesc();
+
+    List<Tag> findAllByOrderByNameAsc();
 }

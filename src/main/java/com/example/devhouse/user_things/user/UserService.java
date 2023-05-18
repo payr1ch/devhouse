@@ -32,18 +32,23 @@ public class UserService implements IUserService {
     @Override
     public User registerUser(RegistrationRequest request) {
         Optional<User> user = this.findByEmail(request.email());
+        Optional<User> user2 = this.findByEmail(request.username());
         if(user.isPresent()){
             throw new UserAlreadyExistsException(
                     "User with email " +  request.email() + " already exists");
+        }
+        if(user2.isPresent()){
+            throw new UserAlreadyExistsException(
+                    "User with username " +  request.username() + " already exists");
         }
         var newUser = new User();
         newUser.setEmail(request.email());
         newUser.setUsername(request.username());
         newUser.setPassword(passwordEncoder.encode(request.password()));
-        newUser.setGroups(request.groups());
-        newUser.setRank(request.rank());
+        newUser.setGroups("");
+        newUser.setRank(0);
         newUser.setAva(null);
-        newUser.setRole(request.role());
+        newUser.setRole("USER");
         return userRepo.save(newUser);
     }
 
