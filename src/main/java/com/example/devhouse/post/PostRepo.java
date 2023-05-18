@@ -19,4 +19,7 @@ public interface PostRepo extends JpaRepository<Post, Long> {
     List<Post> findByStatusNotAndNumberOfAnsersNotOrderByCreatedAtDesc(String accepted, int i);
 
     List<Post> findByNumberOfAnsersGreaterThanOrStatus(int numberOfAnswers, String status);
+
+    List<Post> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(String query, String query1);
+
 }

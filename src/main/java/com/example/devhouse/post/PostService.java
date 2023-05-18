@@ -2,6 +2,8 @@ package com.example.devhouse.post;
 
 import com.example.devhouse.tag.Tag;
 import com.example.devhouse.tag.TagRepo;
+import com.example.devhouse.user_things.user.User;
+import com.example.devhouse.user_things.user.UserRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,7 @@ public class PostService {
         return postRepository.findAll();
     }
 
-    public Optional<Post> getById(Long id) {
+        public Optional<Post> getById(Long id) {
         return postRepository.findById(id);
     }
 
@@ -97,4 +99,5 @@ public class PostService {
     public List<Post> getTopPosts(){
         return postRepository.findByNumberOfAnsersGreaterThanOrStatus(5, "Accepted");
     }
+
 }

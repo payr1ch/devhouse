@@ -5,8 +5,11 @@ import com.example.devhouse.answer.Answer;
 import com.example.devhouse.answer.AnswerRepo;
 import com.example.devhouse.user_things.user.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,13 +28,23 @@ public class CommentService {
 
 
 
-    public List<CommentDTO> getCommentsByAnswerId(Long answerId) {
+
+    public Flux<List<CommentDTO>> streamCommentsByAnswerId(Long answerId) {
         Answer answer = answerRepo.findById(answerId).orElse(null);
         if (answer != null) {
-            List<Comment> comments = commentRepo.findCommentsByAnswer(answer);
-            return convertToCommentDTOList(comments);
+            List<Comment> existingComments = commentRepo.findCommentsByAnswer(answer);
+
+            Flux<List<Comment>> newCommentsFlux = Flux.interval(Duration.ofSeconds(1))
+                    .flatMap(i -> {
+                        List<Comment> comments = commentRepo.findCommentsByAnswer(answer);
+                        return Flux.just(comments);
+                    });
+
+            return Flux.concat(Flux.just(existingComments), newCommentsFlux)
+                    .distinct()
+                    .map(this::convertToCommentDTOList);
         }
-        return null;
+        return Flux.empty();
     }
 
     private List<CommentDTO> convertToCommentDTOList(List<Comment> comments) {
@@ -47,6 +60,15 @@ public class CommentService {
         return commentDTOs;
     }
 
+
+    public List<CommentDTO> getCommentsByAnswerId(Long answerId) {
+        Answer answer = answerRepo.findById(answerId).orElse(null);
+        if (answer != null) {
+            List<Comment> comments = commentRepo.findCommentsByAnswer(answer);
+            return convertToCommentDTOList(comments);
+        }
+        return null;
+    }
     public Comment createComment(CreateCommentRequest commentRequest) {
         Comment comment = new Comment();
         comment.setComment(commentRequest.getComment());

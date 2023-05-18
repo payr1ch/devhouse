@@ -2,7 +2,10 @@ package com.example.devhouse.notification;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 import java.util.Date;
 import java.util.List;
@@ -33,5 +36,9 @@ public class NotificationController {
     @GetMapping("/poll")
     public List<Notification> pollNotifications(@RequestParam("lastChecked") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date lastChecked) {
         return notificationService.getNewNotifications(lastChecked);
+    }
+    @GetMapping(value = "/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ServerSentEvent<Notification>> streamNotifications(@RequestParam("userId") UUID userId) {
+        return notificationService.streamAllNotifications(userId);
     }
 }

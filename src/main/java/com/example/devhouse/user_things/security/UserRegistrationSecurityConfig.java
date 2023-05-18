@@ -18,16 +18,14 @@ public class UserRegistrationSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
-        return http.httpBasic().and().cors()
+        return http.httpBasic()
+                .and().cors() // Enable CORS
                 .and().csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/register/**")
-                .permitAll()
-                .and()
-                .authorizeHttpRequests()
-                .requestMatchers("/**")
-                .hasAnyAuthority("USER")
-                .and().formLogin().and().build();
+                .authorizeRequests()
+                .requestMatchers("/api/register/**").permitAll() // Allow access to /api/register/** without authentication
+                .anyRequest().hasAuthority("USER")
+                .and().formLogin()
+                .and().build();
     }
 
 }

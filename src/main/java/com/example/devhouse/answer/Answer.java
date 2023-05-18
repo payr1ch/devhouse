@@ -35,7 +35,7 @@ public class Answer {
     @Column()
     private int votes = 0;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private Map<UUID, Vote> votedBy;
 
     @ManyToOne(fetch = FetchType.EAGER)

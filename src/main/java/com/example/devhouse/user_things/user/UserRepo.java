@@ -15,4 +15,6 @@ public interface UserRepo extends JpaRepository<User, UUID> {
     User findUserByUserId(UUID userId);
 
     List<User> findAllByOrderByRankDesc();
+
+    List<User> findByUsernameContainingIgnoreCase(String username);
 }

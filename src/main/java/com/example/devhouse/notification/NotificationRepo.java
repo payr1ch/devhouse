@@ -10,4 +10,6 @@ public interface NotificationRepo extends JpaRepository<Notification, Long> {
     List<Notification> findAllByUser(User user);
 
     List<Notification> findByCreatedAtGreaterThan(Date lastChecked);
+
+    List<Notification> findAllByUserAndCreatedAtGreaterThan(User user, Date lastNotificationDate);
 }

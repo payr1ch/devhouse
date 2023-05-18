@@ -3,8 +3,10 @@ package com.example.devhouse.notification;
 import com.example.devhouse.user_things.user.User;
 import com.example.devhouse.user_things.user.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.stereotype.Service;
-
+import reactor.core.publisher.Flux;
+import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +25,27 @@ public class NotificationService {
         return notificationRepo.findByCreatedAtGreaterThan(lastChecked);
     }
 
+
+    public Flux<ServerSentEvent<Notification>> streamAllNotifications(UUID userId) {
+        User user = userRepo.findUserByUserId(userId);
+        List<Notification> existingNotifications = notificationRepo.findAllByUser(user);
+        final Date[] lastNotificationDate = {existingNotifications.isEmpty() ? new Date() : existingNotifications.get(existingNotifications.size() - 1).getCreatedAt()};
+
+        Flux<ServerSentEvent<Notification>> existingNotificationsFlux = Flux.fromIterable(existingNotifications)
+                .map(notification -> ServerSentEvent.builder(notification).build());
+
+        Flux<ServerSentEvent<Notification>> newNotificationsFlux = Flux.interval(Duration.ofSeconds(1))
+                .flatMap(i -> {
+                    List<Notification> newNotifications = notificationRepo.findAllByUserAndCreatedAtGreaterThan(user, lastNotificationDate[0]);
+                    if (!newNotifications.isEmpty()) {
+                        lastNotificationDate[0] = newNotifications.get(newNotifications.size() - 1).getCreatedAt();
+                    }
+                    return Flux.fromIterable(newNotifications);
+                })
+                .map(notification -> ServerSentEvent.builder(notification).build());
+
+        return Flux.concat(existingNotificationsFlux, newNotificationsFlux);
+    }
     public List<Notification> getNotificationsByUserId(UUID userId) {
         User user = userRepo.findUserByUserId(userId);
         return notificationRepo.findAllByUser(user);

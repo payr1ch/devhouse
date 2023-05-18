@@ -36,5 +36,30 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/unanswered")
+    public ResponseEntity<List<Post>> getPostsByUnanswered() {
+        List<Post> posts = postService.getPostsByUnanswered();
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<List<Post>> getRecentPosts() {
+        List<Post> posts = postService.getRecentPosts();
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/unaccepted")
+    public ResponseEntity<List<Post>> getUnacceptedPosts() {
+        List<Post> posts = postService.getUnacceptedPosts();
+        return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/top")
+    public ResponseEntity<List<Post>> getTopPosts() {
+        List<Post> posts = postService.getTopPosts();
+        return ResponseEntity.ok(posts);
+    }
+
 }
 
