@@ -8,7 +8,7 @@ RUN mvn clean package -DskipTests
 #
 # Package stage
 #
-FROM adoptopenjdk:17-jre-hotspot
+FROM openjdk:17-jdk-slim
 COPY --from=build /target/devhouse-0.0.1-SNAPSHOT.jar devhouse.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "devhouse.jar"]
