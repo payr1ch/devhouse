@@ -16,41 +16,42 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-public class UserRegistrationSecurityConfig {
+public class WebSecurityConfig {
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
-
     @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .httpBasic()
                 .and()
                 .cors() // Enable CORS
                 .and()
-                .cors()
-                .and()
                 .csrf().disable()
                 .authorizeRequests()
                 .requestMatchers("/api/register/**").permitAll() // Allow access to /api/register/** without authentication
-                .anyRequest().hasAuthority("USER")
+                .requestMatchers("/api/login").permitAll()
+                .requestMatchers("/logout").permitAll()
+                .requestMatchers("/api/**").authenticated()
+                .anyRequest().authenticated()
                 .and()
-                .formLogin()
-                .successHandler((request, response, authentication) -> {
-                    response.setContentType("application/json");
-                    response.getWriter().write("{\"sessionId\": \"" + request.getSession().getId() + "\"}");
-                })
-                .failureHandler((request, response, exception) -> {
-                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                    response.setContentType("application/json");
-                    response.getWriter().write("{\"error\": \"Authentication failed\"}");
-                })
+                .logout()
+                .logoutUrl("/logout") // Set the URL for logout
+                .logoutSuccessUrl("/api/login") // Redirect to /login?logout after successful logout
+                .invalidateHttpSession(true) // Invalidate the HTTP session
+                .deleteCookies("JSESSIONID") // Delete the JSESSIONID cookie
+                .clearAuthentication(true) // Clear the authentication
                 .permitAll()
                 .and()
+                .formLogin()
+                .disable()
                 .build();
     }
+
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -63,5 +64,5 @@ public class UserRegistrationSecurityConfig {
         return source;
     }
 
-
 }
+
