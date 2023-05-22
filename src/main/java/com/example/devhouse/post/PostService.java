@@ -93,11 +93,20 @@ public class PostService {
     }
 
     public List<Post> getUnacceptedPosts() {
-        return postRepository.findByStatusNotAndNumberOfAnsersNotOrderByCreatedAtDesc("Accepted", 0);
+        return postRepository.findByStatusNotAndNumberOfAnsersNotOrderByCreatedAtDesc("Unanswered", 0);
     }
 
     public List<Post> getTopPosts(){
         return postRepository.findByNumberOfAnsersGreaterThanOrStatus(5, "Accepted");
     }
 
+
+    public List<Post> getPostsByUserId(UUID userId) {
+        return postRepository.findByAuthorId(userId);
+    }
+
+    public List<Post> getPostsByTag(String tagName) {
+        Tag tag = tagRepo.findByNameIgnoreCase(tagName);
+        return postRepository.findByTag(tag);
+    }
 }

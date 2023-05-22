@@ -50,7 +50,7 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*")); // Allow requests from any origin
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://stackoverflow-red.vercel.app/")); // Allow requests from any origin
         configuration.setAllowedMethods(Arrays.asList("*"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true); // Allow credentials (cookies)

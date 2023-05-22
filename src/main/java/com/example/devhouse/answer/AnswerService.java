@@ -184,4 +184,10 @@ public class AnswerService {
     public Answer getAnswerById(Long id) {
         return answerRepo.findAnswerById(id);
     }
+
+    public List<Answer> getAnswersByUserId(UUID userId) {
+        User user = userRepo.findUserByUserId(userId);
+        return answerRepo.findByAuthor(user);
+    }
+
 }

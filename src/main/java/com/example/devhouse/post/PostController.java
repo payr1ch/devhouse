@@ -61,5 +61,10 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
+    @GetMapping("/tag/{tag}")
+    public ResponseEntity<List<Post>> getPostsByTag(@PathVariable String tag) {
+        List<Post> posts = postService.getPostsByTag(tag);
+        return ResponseEntity.ok(posts);
+    }
 }
 
