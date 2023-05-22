@@ -30,15 +30,11 @@ public class LoginController {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
         User user = userRepository.getByUsername(username);
-        // Authenticate user using Spring Security
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            // User is already authenticated, return existing session ID
             return request.getSession().getId();
         }
 
-        // Authenticate user with username and password
-        // (You should replace this with your own authentication logic)
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             // Authentication successful, create session and return session ID
             HttpSession session = request.getSession(true);
