@@ -3,6 +3,7 @@ package com.example.devhouse.user_things.user;
 import jakarta.servlet.http.*;
 
 import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -25,24 +26,25 @@ public class LoginController {
     }
 
     @PostMapping("/api/login")
-    public String login(@RequestBody LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
 
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
         User user = userRepository.getByUsername(username);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            return request.getSession().getId();
+            return ResponseEntity.status(HttpStatus.OK).body(user);
         }
 
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             // Authentication successful, create session and return session ID
             HttpSession session = request.getSession(true);
-            return session.getId();
+
+            return ResponseEntity.status(HttpStatus.OK).body(user);
         }  else {
             // Authentication failed, return error message
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return "Invalid username or password";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
