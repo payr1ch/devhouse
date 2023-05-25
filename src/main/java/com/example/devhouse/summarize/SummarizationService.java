@@ -16,14 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class SummarizationService {
     @Autowired
     public JdbcTemplate jdbcTemplate;
-    private static final String API_KEY = "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";
+    private static final String API_KEY = "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";
     private static final String API_URL = "https://api.openai.com/v1/completions";
     private static final String MODEL_NAME = "text-davinci-003";
     private static final double TEMPERATURE = 0.7;

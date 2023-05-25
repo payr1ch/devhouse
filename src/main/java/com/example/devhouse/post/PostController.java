@@ -28,7 +28,7 @@ public class PostController {
     }
 
     @PostMapping("/createPost")
-    public ResponseEntity<Post> createPost(@ModelAttribute CreatePostRequest postRequest) {
+    public ResponseEntity<Post> createPost(@RequestBody CreatePostRequest postRequest) {
         try {
             Post createdPost = postService.createPost(postRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
@@ -36,6 +36,7 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
     @GetMapping("/unanswered")
     public ResponseEntity<List<Post>> getPostsByUnanswered() {

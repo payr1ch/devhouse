@@ -28,13 +28,8 @@ public class AnswerController {
 //    }
 
     @PostMapping("/createAnswer")
-    public ResponseEntity<Answer> createAnswer(@ModelAttribute CreateAnswerRequest answerRequest) {
-        try {
-            Answer answer = answerService.createAnswer(answerRequest);
-            return ResponseEntity.ok(answer);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public Answer createAnswer(@RequestBody CreateAnswerRequest answerRequest) throws IOException {
+            return answerService.createAnswer(answerRequest);
     }
 
     @PutMapping("/correct/{answerId}")

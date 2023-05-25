@@ -28,7 +28,7 @@ public class PostService {
         return postRepository.findAll();
     }
 
-        public Optional<Post> getById(Long id) {
+    public Optional<Post> getById(Long id) {
         return postRepository.findById(id);
     }
 
@@ -40,10 +40,10 @@ public class PostService {
         String requestTagName = postRequest.getTagName();
         if (requestTagName != null) {
             Tag tag = tagRepo.findByNameIgnoreCase(requestTagName);
-            if (tag != null){
+            if (tag != null) {
                 tag.setNumberOfPosts(tag.getNumberOfPosts() + 1);
                 post.setTag(tag);
-            }else{
+            } else {
                 Tag newTag = new Tag();
                 newTag.setNumberOfPosts(1);
                 newTag.setName(requestTagName);
@@ -54,33 +54,13 @@ public class PostService {
 
         post.setCreatedAt(new Date());
 
-        List<Map<String, Object>> content = postRequest.getContent();
-        if (content != null && !content.isEmpty()) {
-            List<Map<String, String>> newContent = new ArrayList<>();
-            for (Map<String, Object> element : content) {
-                Map<String, String> newElement = new HashMap<>();
-                for (Map.Entry<String, Object> entry : element.entrySet()) {
-                    String key = entry.getKey();
-                    if (key.startsWith("image")) {
-                        // Convert image to base64\
-                        MultipartFile value = (MultipartFile) entry.getValue();
-                        String base64Image = Base64.getEncoder().encodeToString(value.getBytes());
-                        newElement.put(key, base64Image);
-                    } else {
-                        String value = (String) entry.getValue();
-                        newElement.put(key, value);
-                    }
-                }
-                newContent.add(newElement);
-            }
-            String jsonContent = objectMapper.writeValueAsString(newContent);
-            jsonContent = jsonContent.replaceAll("\\\\", "");
-            post.setContent(jsonContent);
-        }
-
+        List<Map<String, Object>> contentList = postRequest.getContent();
+            ObjectMapper objectMapper = new ObjectMapper();
+            String contentString = objectMapper.writeValueAsString(contentList);
+            post.setContent(contentString);
         return postRepository.save(post);
-    }
 
+}
     public List<Post> getPostsByUnanswered() {
         return postRepository.findByNumberOfAnsersEquals(0);
     }

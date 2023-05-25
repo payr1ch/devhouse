@@ -56,46 +56,21 @@ public class AnswerService {
         Answer answer = new Answer();
         Post post = postRepo.findPostByPostId(answerRequest.getPostId());
         post.setNumberOfAnsers(post.getNumberOfAnsers() + 1);
+        postRepo.save(post);
         answer.setTitle(answerRequest.getTitle());
         answer.setAuthor(userRepo.findUserByUserId(answerRequest.getAuthorId()));
         answer.setPost(postRepo.findPostByPostId(answerRequest.getPostId()));
         answer.setCreatedAt(new Date());
-
-
-        List<Map<String, Object>> content = answerRequest.getContent();
-        if (content != null && !content.isEmpty()) {
-            List<Map<String, String>> newContent = new ArrayList<>();
-            for (Map<String, Object> element : content) {
-                Map<String, String> newElement = new LinkedHashMap<>(); // Use LinkedHashMap to preserve insertion order
-                for (Map.Entry<String, Object> entry : element.entrySet()) {
-                    String key = entry.getKey();
-                    if (key.startsWith("image")) {
-                        // Convert image to base64
-                        MultipartFile value = (MultipartFile) entry.getValue();
-                        String base64Image = Base64.getEncoder().encodeToString(value.getBytes());
-                        newElement.put(key, base64Image);
-                    } else {
-                        String value = (String) entry.getValue();
-                        newElement.put(key, value);
-                    }
-                }
-                newContent.add(newElement);
-            }
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, false);
-            String jsonContent = objectMapper.writeValueAsString(newContent);
-
-            // Set the content to the answer
-            answer.setContent(jsonContent);
-        }
-        postRepo.save(post);
-        Answer savedAnswer = answerRepo.save(answer);
+        List<Map<String, Object>> contentList = answerRequest.getContent();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String contentString = objectMapper.writeValueAsString(contentList);
+        answer.setContent(contentString);
 
         // Create notification for the post's author
         String title = "New Answer";
         String description = "A new answer has been posted on your post.";
         notificationService.createNotification(title, description, userRepo.findUserByUserId(post.getAuthorId()));
-        return savedAnswer;
+        return answerRepo.save(answer);
     }
 
 
