@@ -36,7 +36,8 @@ public class User{
     @Column(nullable = false)
     private String groups;
 
-    private byte[] ava;
+    @Column(columnDefinition = "text")
+    private String ava;
 
     @Column(nullable = false)
     private int rank;

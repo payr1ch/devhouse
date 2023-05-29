@@ -31,18 +31,9 @@ public class LoginController {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
         User user = userRepository.getByUsername(username);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.OK).body(user);
-        }
-
         if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            // Authentication successful, create session and return session ID
-            HttpSession session = request.getSession(true);
-
             return ResponseEntity.status(HttpStatus.OK).body(user);
         }  else {
-            // Authentication failed, return error message
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

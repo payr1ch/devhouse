@@ -1,5 +1,6 @@
 package com.example.devhouse.comment;
 
+import com.example.devhouse.answer.AnswerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,5 +32,11 @@ public class CommentController {
 public Flux<List<CommentDTO>> streamCommentsByAnswerId(@PathVariable Long answerId) {
     return commentService.streamCommentsByAnswerId(answerId);
 }
+
+    @GetMapping("/{answerId}")
+    public ResponseEntity<List<CommentDTO>> getAnswersForPost(@PathVariable Long answerId) {
+        List<CommentDTO> comments = commentService.getCommentsByAnswerId(answerId);
+        return ResponseEntity.ok(comments);
+    }
 }
 

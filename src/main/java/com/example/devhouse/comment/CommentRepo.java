@@ -8,7 +8,9 @@ import java.util.List;
 
 
 public interface CommentRepo extends JpaRepository<Comment, Long> {
-    List<Comment> findCommentsByAnswer(Answer answer);
+    List<Comment> findCommentsByAnswerOrderByDateDesc(Answer answer);
 
     List<Comment> findCommentsByAnswerAndDateGreaterThan(Answer answer, Date lastCommentDate);
+
+    List<Comment> findCommentsByAnswer(Answer answer);
 }

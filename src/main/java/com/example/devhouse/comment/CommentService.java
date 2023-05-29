@@ -64,7 +64,7 @@ public class CommentService {
     public List<CommentDTO> getCommentsByAnswerId(Long answerId) {
         Answer answer = answerRepo.findById(answerId).orElse(null);
         if (answer != null) {
-            List<Comment> comments = commentRepo.findCommentsByAnswer(answer);
+            List<Comment> comments = commentRepo.findCommentsByAnswerOrderByDateDesc(answer);
             return convertToCommentDTOList(comments);
         }
         return null;

@@ -8,7 +8,7 @@ public class UserUpdateRequest {
 
     private String username;
     private String groups;
-    private MultipartFile ava;
+    private String ava;
 
     // getters and setters
 

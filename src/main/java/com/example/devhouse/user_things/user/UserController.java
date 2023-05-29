@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("/update/{id}")
-    public User updateUser(@PathVariable UUID id, @ModelAttribute UserUpdateRequest request) {
+    public User updateUser(@PathVariable UUID id, @RequestBody UserUpdateRequest request) {
         return userService.updateUser(id, request);
     }
 

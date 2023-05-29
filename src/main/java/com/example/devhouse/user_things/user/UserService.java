@@ -93,12 +93,7 @@ public class UserService implements IUserService {
         }
 
         if (updateRequest.getAva() != null) {
-            try {
-                byte [] imageData = updateRequest.getAva().getBytes();
-                user.setAva(imageData);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to save ava image: " + e.getMessage());
-            }
+            user.setAva(updateRequest.getAva());
         }
 
         if (updateRequest.getGroups() != null) {
