@@ -19,11 +19,8 @@ import java.util.UUID;
 public class StarredController {
 
     private final StarredService starredService;
-
     private final UserRepo userRepo;
-
     private final UserService userService;
-
     private final PostRepo postRepo;
     @Autowired
     public StarredController(StarredService starredService, UserRepo userRepo, UserService userService, PostRepo postRepo) {
@@ -32,16 +29,13 @@ public class StarredController {
         this.userService = userService;
         this.postRepo = postRepo;
     }
-
     @PostMapping("/createStarred")
     public ResponseEntity<StarredDTO> saveStarredPost(@RequestBody StarredRequestDTO requestDTO) {
         User user = userService.findByUserId(requestDTO.getUserId());
         Post post = postRepo.findPostByPostId(requestDTO.getPostId());
-
         if (user == null || post == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         Starred existingStarred = starredService.findByUserAndPost(user, post);
         if (existingStarred != null) {
             starredService.remove(existingStarred.getStarredId());
@@ -50,20 +44,16 @@ public class StarredController {
         Starred starred = new Starred();
         starred.setUser(user);
         starred.setPost(post);
-
         Starred savedStarred = starredService.save(starred);
         StarredDTO responseDTO = starredService.convertToStarredDTO(savedStarred);
-
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
-
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Starred>> getStarredPostsByUserId(@PathVariable UUID userId) {
         User user = userRepo.findUserByUserId(userId);
         List<Starred> starredPosts = starredService.getByUserId(user);
         return new ResponseEntity<>(starredPosts, HttpStatus.OK);
     }
-
     @DeleteMapping("/deleteAllStarred/{userId}")
     public ResponseEntity<Void> deleteAllStarredByUserId(@PathVariable UUID userId) {
         User user = userService.findByUserId(userId);

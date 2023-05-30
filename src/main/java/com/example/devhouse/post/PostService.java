@@ -73,7 +73,7 @@ public class PostService {
     }
 
     public List<Post> getUnacceptedPosts() {
-        return postRepository.findByStatusNotAndNumberOfAnsersNotOrderByCreatedAtDesc("Unanswered", 0);
+        return postRepository.findByStatusNotAndNumberOfAnsersNotOrderByCreatedAtDesc("Accepted", 0);
     }
 
     public List<Post> getTopPosts(){

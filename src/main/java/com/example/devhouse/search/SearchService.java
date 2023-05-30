@@ -25,21 +25,16 @@ public class SearchService {
         this.tagRepo = tagRepo;
     }
 
-    public Object search(String query) {
+    public Object search(SearchRequest request) {
+        String query = request.getQuery();
         if (query.startsWith("@")) {
-            // Search for users
             String username = query.substring(1); // Remove the '@' symbol
-            List<User> users = userRepository.findByUsernameContainingIgnoreCase(username);
-            return users;
+            return userRepository.findByUsernameContainingIgnoreCase(username);
         } else if (query.startsWith("#")) {
-            // Search for tags
             String tag = query.substring(1); // Remove the '#' symbol
-            List<Tag> tags = tagRepo.findByNameContainingIgnoreCase(tag);
-            return tags;
+            return tagRepo.findByNameContainingIgnoreCase(tag);
         } else {
-            // Search for posts
-            List<Post> posts = postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(query, query);
-            return posts;
+            return postRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(query, query);
         }
     }
 }

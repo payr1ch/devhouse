@@ -28,7 +28,7 @@ public class NotificationService {
 
     public Flux<ServerSentEvent<Notification>> streamAllNotifications(UUID userId) {
         User user = userRepo.findUserByUserId(userId);
-        List<Notification> existingNotifications = notificationRepo.findAllByUser(user);
+        List<Notification> existingNotifications = notificationRepo.findAllByUserOrderByCreatedAtDesc(user);
         final Date[] lastNotificationDate = {existingNotifications.isEmpty() ? new Date() : existingNotifications.get(existingNotifications.size() - 1).getCreatedAt()};
 
         Flux<ServerSentEvent<Notification>> existingNotificationsFlux = Flux.fromIterable(existingNotifications)
@@ -48,7 +48,7 @@ public class NotificationService {
     }
     public List<Notification> getNotificationsByUserId(UUID userId) {
         User user = userRepo.findUserByUserId(userId);
-        return notificationRepo.findAllByUser(user);
+        return notificationRepo.findAllByUserOrderByCreatedAtDesc(user);
     }
 
     public void createNotification(String title, String description, User user) {

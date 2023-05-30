@@ -27,4 +27,6 @@ public interface PostRepo extends JpaRepository<Post, Long> {
     List<Post> findByAuthorId(UUID userId);
 
     List<Post> findByTag(Tag tag);
+
+    int countPostsByAuthorId(UUID userId);
 }

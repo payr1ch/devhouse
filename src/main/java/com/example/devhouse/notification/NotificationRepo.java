@@ -7,9 +7,11 @@ import java.util.Date;
 import java.util.List;
 
 public interface NotificationRepo extends JpaRepository<Notification, Long> {
-    List<Notification> findAllByUser(User user);
+    List<Notification> findAllByUserOrderByCreatedAtDesc(User user);
 
     List<Notification> findByCreatedAtGreaterThan(Date lastChecked);
 
     List<Notification> findAllByUserAndCreatedAtGreaterThan(User user, Date lastNotificationDate);
+
+    List<Notification> findAllByUser(User user);
 }

@@ -28,8 +28,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable UUID id) {
-        return userService.findByUserId(id);
+    public UserDTO getUserById(@PathVariable UUID id) {
+        return userService.findByUserData(id);
     }
 
     @PostMapping("/update/{id}")

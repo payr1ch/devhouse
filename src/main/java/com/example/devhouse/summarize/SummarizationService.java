@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 public class SummarizationService {
     @Autowired
     public JdbcTemplate jdbcTemplate;
-    private static final String API_KEY = "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";
+    private static final String API_KEY = "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";
     private static final String API_URL = "https://api.openai.com/v1/completions";
     private static final String MODEL_NAME = "text-davinci-003";
     private static final double TEMPERATURE = 0.7;
@@ -37,8 +37,6 @@ public class SummarizationService {
         headers.setBearerAuth(API_KEY);
 
         RestTemplate restTemplate = new RestTemplate();
-
-        // Create the request body using ObjectMapper
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody;
         try {

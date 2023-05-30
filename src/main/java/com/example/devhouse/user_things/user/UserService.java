@@ -1,5 +1,7 @@
 package com.example.devhouse.user_things.user;
 
+import com.example.devhouse.answer.AnswerRepo;
+import com.example.devhouse.post.PostRepo;
 import com.example.devhouse.user_things.registration.RegistrationRequest;
 import com.example.devhouse.user_things.registration.token.VerificationToken;
 import com.example.devhouse.user_things.registration.token.VerificationTokenRepo;
@@ -19,6 +21,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService implements IUserService {
     private final UserRepo userRepo;
+    private final PostRepo postRepo;
+    private final AnswerRepo answerRepo;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepo verificationTokenRepo;
     @Override
@@ -84,6 +88,30 @@ public class UserService implements IUserService {
     public User findByUserId(UUID userid) {
         return userRepo.findUserByUserId(userid);
     }
+
+    public UserDTO findByUserData(UUID userId) {
+        User user = userRepo.findUserByUserId(userId);
+        UserDTO userDTO = new UserDTO();
+
+        if (user != null) {
+            userDTO.setUserId(user.getUserId());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setPassword(user.getPassword());
+            userDTO.setUsername(user.getUsername());
+            userDTO.setGroups(user.getGroups());
+            userDTO.setAva(user.getAva());
+            userDTO.setRank(user.getRank());
+            userDTO.setIsEnabled(user.getIsEnabled());
+
+            int numberOfPosts = postRepo.countPostsByAuthorId(userId);
+            userDTO.setNumberOfPosts(numberOfPosts);
+            int numberOfAnswers = answerRepo.countAnswersByAuthor(user);
+            userDTO.setNumberOfAnswers(numberOfAnswers);
+        }
+
+        return userDTO;
+    }
+
 
     public User updateUser(UUID userId, UserUpdateRequest updateRequest) {
         User user = userRepo.findUserByUserId(userId);
