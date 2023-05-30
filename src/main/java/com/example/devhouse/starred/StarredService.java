@@ -1,5 +1,6 @@
 package com.example.devhouse.starred;
 
+import com.example.devhouse.post.Post;
 import com.example.devhouse.user_things.user.User;
 import com.example.devhouse.user_things.user.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +43,15 @@ public class StarredService {
     }
 
 
+    public Starred findByUserAndPost(User user, Post post) {
+        return starredRepo.findStarredByUserAndPost(user, post);
+    }
 
+    public List<Starred> findByUser(User user) {
+        return starredRepo.findStarredByUser(user);
+    }
+
+    public void deleteAll(List<Starred> starredPosts) {
+        starredRepo.deleteAll(starredPosts);
+    }
 }

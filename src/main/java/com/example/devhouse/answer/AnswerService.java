@@ -89,59 +89,72 @@ public class AnswerService {
         }
     }
 
-    public void upvoteAnswer(Long answerId, UUID userId) {
+    public String upvoteAnswer(Long answerId, UUID userId) {
         Answer answer = answerRepo.findById(answerId).orElse(null);
         User user;
         if (answer != null) {
             user = answer.getAuthor();
-            Map<UUID, Vote> votedBy = answer.getVotedBy();
-            if (votedBy.containsKey(userId)) {
-                if (votedBy.get(userId) == Vote.DOWNVOTE) {
-                    answer.setVotes(answer.getVotes() + 2);
-                    votedBy.put(userId, Vote.UPVOTE);
-                } else {
-                    answer.setVotes(answer.getVotes() - 1);
-                    votedBy.remove(userId);
-                }
-            } else {
-                answer.setVotes(answer.getVotes() + 1);
-                votedBy.put(userId, Vote.UPVOTE);
-            }
-            updateRankForUser(user.getUserId());
-            answerRepo.save(answer);
-            Post post = answer.getPost();
-            String title = "You're earning points!";
-            String description = "Your answer was upvoted. My boy ;)";
-            notificationService.createNotification(title, description, user);
-
-        }
-    }
-
-    public void downvoteAnswer(Long answerId, UUID userId) {
-        Answer answer = answerRepo.findById(answerId).orElse(null);
-        User user;
-        if (answer != null) {
-            user = answer.getAuthor();
-            Map<UUID, Vote> votedBy = answer.getVotedBy();
-            if (votedBy.containsKey(userId)) {
-                if (votedBy.get(userId) == Vote.UPVOTE) {
-                    answer.setVotes(answer.getVotes() - 2);
-                    votedBy.put(userId, Vote.DOWNVOTE);
+            if(user.getUserId() != userId){
+                Map<UUID, Vote> votedBy = answer.getVotedBy();
+                if (votedBy.containsKey(userId)) {
+                    if (votedBy.get(userId) == Vote.DOWNVOTE) {
+                        answer.setVotes(answer.getVotes() + 2);
+                        votedBy.put(userId, Vote.UPVOTE);
+                    } else {
+                        answer.setVotes(answer.getVotes() - 1);
+                        votedBy.remove(userId);
+                    }
                 } else {
                     answer.setVotes(answer.getVotes() + 1);
-                    votedBy.remove(userId);
+                    votedBy.put(userId, Vote.UPVOTE);
                 }
-            } else {
-                answer.setVotes(answer.getVotes() - 1);
-                votedBy.put(userId, Vote.DOWNVOTE);
+                updateRankForUser(user.getUserId());
+                answerRepo.save(answer);
+                Post post = answer.getPost();
+                String title = "You're earning points!";
+                String description = "Your answer was upvoted. My boy ;)";
+                notificationService.createNotification(title, description, user);
+                return "Upvoted!";
             }
-            updateRankForUser(user.getUserId());
-            answerRepo.save(answer);
-            Post post = answer.getPost();
-            String title = "You're losing points!";
-            String description = "Your answer was downvoted ((";
-            notificationService.createNotification(title, description, user);
+            else{
+                return "You cant vote to yourself";
+            }
         }
+        return "Error 404. Answer not found";
+    }
+
+    public String downvoteAnswer(Long answerId, UUID userId) {
+        Answer answer = answerRepo.findById(answerId).orElse(null);
+        User user;
+        if (answer != null) {
+            user = answer.getAuthor();
+            if (user.getUserId() != userId) {
+                Map<UUID, Vote> votedBy = answer.getVotedBy();
+                if (votedBy.containsKey(userId)) {
+                    if (votedBy.get(userId) == Vote.UPVOTE) {
+                        answer.setVotes(answer.getVotes() - 2);
+                        votedBy.put(userId, Vote.DOWNVOTE);
+                    } else {
+                        answer.setVotes(answer.getVotes() + 1);
+                        votedBy.remove(userId);
+                    }
+                } else {
+                    answer.setVotes(answer.getVotes() - 1);
+                    votedBy.put(userId, Vote.DOWNVOTE);
+                }
+                updateRankForUser(user.getUserId());
+                answerRepo.save(answer);
+                Post post = answer.getPost();
+                String title = "You're losing points!";
+                String description = "Your answer was downvoted ((";
+                notificationService.createNotification(title, description, user);
+                return "Downvoted!";
+            }
+            else{
+                return "You cant vote to yourself";
+            }
+        }
+        return "Error 404. Answer not found";
     }
 
     public void updateRankForUser(UUID userId) {

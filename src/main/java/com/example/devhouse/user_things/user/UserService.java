@@ -32,7 +32,7 @@ public class UserService implements IUserService {
     @Override
     public User registerUser(RegistrationRequest request) {
         Optional<User> user = this.findByEmail(request.email());
-        Optional<User> user2 = this.findByEmail(request.username());
+        Optional<User> user2 = this.userRepo.findByUsername(request.username());
         if(user.isPresent()){
             throw new UserAlreadyExistsException(
                     "User with email " +  request.email() + " already exists");
@@ -88,8 +88,12 @@ public class UserService implements IUserService {
     public User updateUser(UUID userId, UserUpdateRequest updateRequest) {
         User user = userRepo.findUserByUserId(userId);
 
-        if (updateRequest.getUsername() != null) {
-            user.setUsername(updateRequest.getUsername());
+        if (!updateRequest.getUsername().isEmpty()) {
+            User user2 = userRepo.findUserByUsername(updateRequest.getUsername());
+            if(user2 == null){
+                user.setUsername(updateRequest.getUsername());
+            }
+
         }
 
         if (updateRequest.getAva() != null) {

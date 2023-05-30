@@ -1,5 +1,6 @@
 package com.example.devhouse.answer;
 
+import com.example.devhouse.user_things.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,22 +44,20 @@ public class AnswerController {
     }
 
     @PostMapping("/upvote/{answerId}")
-    public ResponseEntity<?> upvoteAnswer(@PathVariable Long answerId, @RequestParam UUID userId) {
+    public String upvoteAnswer(@PathVariable Long answerId, @RequestParam UUID userId) {
         try {
-            answerService.upvoteAnswer(answerId, userId);
-            return ResponseEntity.ok().build();
+            return answerService.upvoteAnswer(answerId, userId);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().toString();
         }
     }
 
     @PostMapping("/downvote/{answerId}")
-    public ResponseEntity<?> downvoteAnswer(@PathVariable Long answerId, @RequestParam UUID userId) {
+    public String downvoteAnswer(@PathVariable Long answerId, @RequestParam UUID userId) {
         try {
-            answerService.downvoteAnswer(answerId, userId);
-            return ResponseEntity.ok().build();
+            return answerService.downvoteAnswer(answerId, userId);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build().toString();
         }
     }
 

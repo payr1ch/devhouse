@@ -42,6 +42,11 @@ public class StarredController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        Starred existingStarred = starredService.findByUserAndPost(user, post);
+        if (existingStarred != null) {
+            starredService.remove(existingStarred.getStarredId());
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
         Starred starred = new Starred();
         starred.setUser(user);
         starred.setPost(post);
@@ -51,6 +56,7 @@ public class StarredController {
 
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Starred>> getStarredPostsByUserId(@PathVariable UUID userId) {
         User user = userRepo.findUserByUserId(userId);
@@ -58,9 +64,17 @@ public class StarredController {
         return new ResponseEntity<>(starredPosts, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{starredId}")
-    public ResponseEntity<Void> removeStarredPost(@PathVariable Long starredId) {
-        starredService.remove(starredId);
+    @DeleteMapping("/deleteAllStarred/{userId}")
+    public ResponseEntity<Void> deleteAllStarredByUserId(@PathVariable UUID userId) {
+        User user = userService.findByUserId(userId);
+
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        List<Starred> starredPosts = starredService.findByUser(user);
+
+        starredService.deleteAll(starredPosts);
+
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

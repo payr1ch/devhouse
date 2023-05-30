@@ -18,10 +18,10 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
-//    @GetMapping("/allNotification/{userId}")
-//    public List<Notification> getNotificationsByUser(@PathVariable UUID userId) {
-//        return notificationService.getNotificationsByUserId(userId);
-//    }
+    @GetMapping("/allNotification/{userId}")
+    public List<Notification> getNotificationsByUser(@PathVariable UUID userId) {
+        return notificationService.getNotificationsByUserId(userId);
+   }
 
     @PutMapping("/update/{notificationId}")
     public void updateNotificationStatus(@PathVariable Long notificationId) {

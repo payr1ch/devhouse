@@ -1,5 +1,6 @@
 package com.example.devhouse.user_things.registration;
 
+import com.example.devhouse.notification.NotificationService;
 import com.example.devhouse.user_things.event.RegistrationCompleteEvent;
 import com.example.devhouse.user_things.registration.token.VerificationToken;
 import com.example.devhouse.user_things.registration.token.VerificationTokenRepo;
@@ -17,12 +18,16 @@ public class RegistrationController {
 
     private final UserService userService;
     private final ApplicationEventPublisher publisher;
+    private final NotificationService notificationService;
 
     private final VerificationTokenRepo verificationTokenRepo;
     @PostMapping
     public String registerUser(@RequestBody RegistrationRequest request, final HttpServletRequest httpServletRequest){
         User user = userService.registerUser(request);
         publisher.publishEvent(new RegistrationCompleteEvent(user, applicationUrl(httpServletRequest)));
+        String title = "Welcome to the DevHouse";
+        String description = "Get ready to code, create, and conquer.";
+        notificationService.createNotification(title, description, user);
         return "Success! Please check your email to verify it!";
     }
 
