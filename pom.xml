@@ -72,11 +72,6 @@
 			<artifactId>spring-webflux</artifactId>
 			<version>6.0.9</version>
 		</dependency>
-		<dependency>
-			<groupId>com.google.cloud</groupId>
-			<artifactId>spring-cloud-gcp-starter-sql-postgresql</artifactId>
-			<version>4.3.1</version>
-		</dependency>
 	</dependencies>
 
 	<build>
